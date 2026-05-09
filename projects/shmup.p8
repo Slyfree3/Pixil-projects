@@ -1,9 +1,7 @@
 pico-8 cartridge // http://www.pico-8.com
 version 43
 __lua__
--- this will clear the scr
-
---sprite 1, x:64, y:64
+-- main startup page
 
 
 -- initialize variables
@@ -11,9 +9,10 @@ function _init()
     make_ship()
     make_bullet()
     set_score()
+    set_stars()
 end
 
--- handle movement logic
+-- handles actions
 function _update()
     move_ship()
     move_bullet()
@@ -21,12 +20,13 @@ function _update()
     animate_exaust()
     animate_bullet()
     animate_muzzlefl()
+    animate_stars★()
 end
 
 -- draw to the screen
 function _draw()
   cls()          -- clear screen with dark blue
-  starfield()
+  draw_stars()
   draw_ship()   -- draw sprite #1 at coordinates x, y
 		draw_bullet() -- draw sprite for bullet
 		draw_exhaust()
@@ -34,22 +34,20 @@ function _draw()
 		draw_heart()
 end
 -->8
-
+-- ship movement and actions
 
 function make_ship()
 				gameover=false
     ship = {}
     ship.sx = 2 -- ship speed x axis
     ship.sy = 2 -- ship speed y axis
-    ship.x = 64
-    ship.y = 64
-    ship.lives = 3
-    shipspr = 2
-    exaustspr = 6
+    ship.x = 64 -- ship position x
+    ship.y = 64 -- ship position y
+    ship.lives = 3 
+    shipspr = 2 -- ship sprite
+    exaustspr = 6 
     muzzle = 0
 end
-
-
 
 function make_bullet()
 	bullet={}
@@ -57,7 +55,6 @@ function make_bullet()
 	bullet.y = -10
 	bullet.sp = 7
 	bullet.spr = 16
-	
 end
 
 function move_ship()
@@ -82,10 +79,14 @@ function move_bullet()
 	bullet.y-=bullet.sp
 end
 
+function reset_bullet()
+			bullet.x=ship.x
+		 bullet.y=ship.y-5
+end
+
 function shoot_bullet()
 		if btnp(5) then
-		 bullet.x=ship.x
-		 bullet.y=ship.y-5
+			reset_bullet()
 		 muzzle = 5 
 		 sfx(0)
 		end
@@ -127,7 +128,7 @@ function animate_muzzlefl()
 	end
 end
 -->8
--- formground
+-- forground
 
 
 function set_score()
@@ -155,9 +156,40 @@ end
 
 -->8
 -- background
-function starfield()
-	for i=1,10 do
-		pset(flr(rnd(128)),flr(rnd(128)),flr(rnd(128)))
+function set_stars()
+	starx={}
+	stary={}
+	starspd={}
+	for i=1,50 do
+		add(starx,flr(rnd(128)))
+		add(stary,flr(rnd(128)))
+		add(starspd,rnd(5)+1.5)
+	end
+end
+
+function animate_stars★()
+	for i=1,#stary do
+			local sy = stary[i]
+			sy+=starspd[i]
+			if sy>128 then
+				sy-=128
+			end
+			stary[i]=sy
+	end
+end
+
+function draw_stars()
+	for i=1,#starx do
+		local scol=6 
+		
+		if starspd[i]<1.5 then -- set slower star to darker color
+			scol=13
+			
+		elseif starspd[i]<5 then -- set slower star to darker color
+			scol=1
+		end
+		
+		pset(starx[i],stary[i],scol)
 	end
 end
 __gfx__
