@@ -1,43 +1,40 @@
 pico-8 cartridge // http://www.pico-8.com
 version 43
 __lua__
--- main startup page
+#include helper.lua
 
+
+-- main startup page
 
 -- initialize variables
 function _init()
-    make_ship()
-    make_bullet()
-    set_score()
-    set_stars()
+ mode="start"
+ set_stars() -- give stars property
 end
 
 -- handles actions
 function _update()
-    move_ship()
-    move_bullet()
-    shoot_bullet()
-    animate_exaust()
-    animate_bullet()
-    animate_muzzlefl()
-    animate_stars★()
+	state_update()
+	animate_stars★()
 end
 
 -- draw to the screen
 function _draw()
-  cls()          -- clear screen with dark blue
-  draw_stars()
-  draw_ship()   -- draw sprite #1 at coordinates x, y
-		draw_bullet() -- draw sprite for bullet
-		draw_exhaust()
-		draw_score()
-		draw_heart()
+	state_draw()
+	draw_stars()
+end
+
+function start_game()
+	mode="game"
+	make_ship()
+ make_bullet()
+ set_score()
+ set_stars()
 end
 -->8
 -- ship movement and actions
 
 function make_ship()
-				gameover=false
     ship = {}
     ship.sx = 2 -- ship speed x axis
     ship.sy = 2 -- ship speed y axis
@@ -73,43 +70,43 @@ function move_ship()
     if btn(3) then
      ship.y += ship.sy
     end
+    if btn(4) then --todo:remove this
+    	mode="over"
+    end
 end
 
 function move_bullet()
-	bullet.y-=bullet.sp
+	for i=#bullet,1,-1 do
+		local newbul=bullet[i]
+		newbul.y-=bullet.sp
+		
+		if newbul.y<-8 then -- delete bullet
+			del(bullet,newbul)
+		end
+	end
 end
 
-function reset_bullet()
-			bullet.x=ship.x
-		 bullet.y=ship.y-5
+function create_bullet()
+			local newbul={}
+			newbul.x=ship.x
+			newbul.y=ship.y - 5
+			add(bullet,newbul)
 end
 
 function shoot_bullet()
 		if btnp(5) then
-			reset_bullet()
+			create_bullet()
 		 muzzle = 5 
 		 sfx(0)
 		end
 end
 
-function draw_ship()
-  spr(shipspr, ship.x, ship.y)
-  
-  if muzzle>0 then
-  	circfill(ship.x+3,ship.y-1,muzzle,7)
-  end
-end
 
-function draw_exhaust()
-		spr(exaustspr, ship.x, ship.y+8)
-end
 
-function draw_bullet()
-		spr(bullet.spr, bullet.x, bullet.y)
-end
+
 
 function animate_bullet()
-		bullet.spr=bullet.spr+1
+	bullet.spr=bullet.spr+1
 	if	bullet.spr>19 then
 		bullet.spr=16
 	end
@@ -151,46 +148,135 @@ function draw_heart() -- display life
 			spr(14,i*9-8,1)
 		end
 	end
-
 end
+
 
 -->8
 -- background
 function set_stars()
-	starx={}
-	stary={}
-	starspd={}
+	stars={}
 	for i=1,50 do
-		add(starx,flr(rnd(128)))
-		add(stary,flr(rnd(128)))
-		add(starspd,rnd(5)+1.5)
+		local newstars={}
+		newstars.x=flr(rnd(128))
+		newstars.y=flr(rnd(128))
+		newstars.spd=rnd(5)+1.5
+		add(stars,newstars)
 	end
 end
 
 function animate_stars★()
-	for i=1,#stary do
-			local sy = stary[i]
-			sy+=starspd[i]
-			if sy>128 then
-				sy-=128
-			end
-			stary[i]=sy
+	for i=1,#stars do
+		local newstar=stars[i]
+		newstar.y+=newstar.spd
+		if newstar.y>128 then
+			newstar.y-=128
+		end
 	end
 end
 
-function draw_stars()
-	for i=1,#starx do
-		local scol=6 
+
+function draw_stars()	
+	for i=1,#stars do
+		local newstar=stars[i]
+		local scol=6
 		
-		if starspd[i]<1.5 then -- set slower star to darker color
+		if newstar.spd<1.5 then
 			scol=13
-			
-		elseif starspd[i]<5 then -- set slower star to darker color
+		elseif newstar.spd<5 then
 			scol=1
 		end
-		
-		pset(starx[i],stary[i],scol)
+		 pset(newstar.x,newstar.y,scol)
 	end
+end
+-->8
+--update
+
+function state_update()
+	if mode=="game" then
+		update_game()
+	elseif mode=="start" then
+	-- start screen
+		update_start()
+	elseif mode=="over" then
+		update_over()
+	end
+end
+
+function update_game()
+    move_ship()
+    move_bullet()
+    shoot_bullet()
+    animate_exaust()
+    animate_bullet()
+    animate_muzzlefl()
+    animate_stars★()
+end
+
+function update_start()
+	if btnp(4) or btnp(5) then -- use this on menus
+		start_game()
+	end
+end
+
+function update_over()
+	if btnp(4) or btnp(5) then -- use this on menus
+		mode="start"
+	end
+end
+-->8
+-- draw game
+function state_draw()
+	if mode=="game" then
+		draw_game()
+	elseif mode=="start" then
+		-- start screen
+			draw_start()
+	elseif mode=="over" then
+		draw_over()
+	end
+end
+
+function draw_game()
+  cls()          -- clear screen with dark blue
+  draw_stars()
+  draw_ship()   -- draw sprite #1 at coordinates x, y
+		draw_bullet() -- draw sprite for bullet
+		draw_exhaust()
+		draw_score()
+		draw_heart()
+end
+
+function draw_start()
+	cls(0)
+	print("★super star squirt★", 20,40,12)
+	print("press any key to start!", 20,80,rnd(128))
+end
+
+
+function draw_ship()
+  spr(shipspr, ship.x, ship.y)
+  
+  if muzzle>0 then
+  	circfill(ship.x+3,ship.y-1,muzzle,7)
+  end
+end
+
+function draw_exhaust()
+		spr(exaustspr, ship.x, ship.y+8)
+end
+
+function draw_bullet()
+		for i=1,#bullet do
+			local newbul=bullet[i]
+			newbul.spr=16
+			spr(bullet.spr,newbul.x,newbul.y)
+		end
+end
+
+function draw_over()
+	cls(0)
+	print("☉oh,no! the watchers won!☉", 10,40,rnd(13))
+	print("press any key to reconstruct!", 12,80,2)
 end
 __gfx__
 00000000000330000003300000033000000000000000000000000000000000000000000000000000000000000000000000000000088008800880088000000000
@@ -201,12 +287,14 @@ __gfx__
 007007000355bb303bb55bb303bb5530000000000000000000000000000990000000000000000000000000000000000000000000008888000080080000000000
 000000000366b33003b66b30033b6630000000000000000000000000000000000000000000000000000000000000000000000000000880000008800000000000
 00000000003aa300003aa300003aa300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0007700000077000000aa00000077000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000aa000000aa00000977900000aa000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000aa000000990000009900000099000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00099000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000003300330033003300330033003300330000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000033b33b3333b33b3333b33b3333b33b33000000000000000000000000000000000000000000000000
+0007700000077000000aa0000007700000000000000000003bbbbbb33bbbbbb33bbbbbb33bbbbbb3000000000000000000000000000000000000000000000000
+000aa000000aa00000977900000aa00000000000000000003b7707b33b7707b33b7707b33b7707b3000000000000000000000000000000000000000000000000
+000aa00000099000000990000009900000000000000000000b7007b00b7007b00b7007b00b7007b0000000000000000000000000000000000000000000000000
+00099000000000000000000000000000000000000000000000377300003773000037730000377300000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000003033030030330300303303003033030000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000003300330030000303000000303000030000000000000000000000000000000000000000000000000
 __label__
 70000000888800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 07000000888800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
