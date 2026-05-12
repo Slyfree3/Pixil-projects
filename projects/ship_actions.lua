@@ -1,5 +1,6 @@
 -- ship movement and actions
 
+
 function make_ship()
     ship = {}
     ship.sx = 2 -- ship speed x axis
@@ -7,9 +8,12 @@ function make_ship()
     ship.x = 64 -- ship position x
     ship.y = 64 -- ship position y
     ship.lives = 3 
-    shipspr = 2 -- ship sprite
-    exaustspr = 6 
+    ship.spr = 2 -- ship sprite
     muzzle = 0
+	exaust={}
+	exaust.spr=5
+	exaust.x=ship.x
+	exaust.y=ship.y+8
 end
 
 function make_bullet()
@@ -17,18 +21,19 @@ function make_bullet()
 	bullet.x = 64
 	bullet.y = -10
 	bullet.sp = 7
-	bullet.spr = 16
+	bullet.spr = 16 -- starting sprite for bullet animation
+	bullet.sprm =19 -- max sprite for bullet animation
 end
 
 function move_ship()
-				shipspr = 2
+	ship.spr = 2
     if btn(0) then
      ship.x -= ship.sx
-     shipspr = 1
+     ship.spr = 1
     end
     if btn(1) then
      ship.x += ship.sx
-     shipspr = 3
+     ship.spr = 3
     end
     if btn(2) then
      ship.y -= ship.sy
@@ -45,7 +50,6 @@ function move_bullet()
 	for i=#bullet,1,-1 do
 		local newbul=bullet[i]
 		newbul.y-=bullet.sp
-		
 		if newbul.y<-8 then -- delete bullet
 			del(bullet,newbul)
 		end
@@ -53,31 +57,34 @@ function move_bullet()
 end
 
 function create_bullet()
-			local newbul={}
-			newbul.x=ship.x
-			newbul.y=ship.y - 5
-			add(bullet,newbul)
+	local newbul={}
+	newbul.x=ship.x
+	newbul.y=ship.y - 5
+	newbul.spr=16
+	add(bullet,newbul)
 end
 
 function shoot_bullet()
-		if btnp(5) then
-			create_bullet()
-		 muzzle = 5 
-		 sfx(0)
-		end
+	if btnp(5) then
+		create_bullet()
+	 muzzle = 5 
+	 sfx(0)
+	end
 end
 
 function animate_bullet()
-	bullet.spr=bullet.spr+1
-	if	bullet.spr>19 then
-		bullet.spr=16
+	for newbul in all(bullet) do
+		newbul.spr+=1
+		if	newbul.spr>bullet.sprm then
+			newbul.spr=16
+		end
 	end
 end
 
 function animate_exaust()
-	exaustspr=exaustspr+1
-	if	exaustspr>10 then
-		exaustspr=5
+	exaust.spr+=0.6
+	if	exaust.spr>10.8 then
+		exaust.spr=6
 	end
 end
 
