@@ -7,6 +7,7 @@ __lua__
 #include background.lua
 #include update_game.lua
 #include draw_game.lua
+#include enemy.lua
 -- main startup page
 
 

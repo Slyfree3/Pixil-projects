@@ -28,8 +28,10 @@ function draw_enemy()
 end
 
 function animate_enemy ()
-    enemy.spr+=.25
-    if enemy.spr>=25 then
-        enemy.spr=22
+    for e in all(enemy) do
+        e.spr+=.25
+        if e.spr>=25 then
+            e.spr=22
+        end
     end
 end  

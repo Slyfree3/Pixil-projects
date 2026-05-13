@@ -50,6 +50,7 @@ function move_bullet()
 	for i=#bullet,1,-1 do
 		local newbul=bullet[i]
 		newbul.y-=bullet.sp
+
 		if newbul.y<-8 then -- delete bullet
 			del(bullet,newbul)
 		end

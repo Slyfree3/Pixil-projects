@@ -18,6 +18,8 @@ function update_game()
     animate_exaust()
     animate_bullet()
     animate_muzzlefl()
+	animate_enemy()
+    move_enemy()
     animate_stars★()
 end
 

@@ -22,6 +22,7 @@ function start_game()
     mode="game"
 	make_ship()
     make_bullet()
-    set_score()
+    make_enemy()
+	set_score()
     set_stars()
 end
