@@ -2,8 +2,14 @@ function collision_side_ship()
     if ship.x<0 then
         ship.x=0
     end
-    if ship.x>128 then
-        ship.x=128
+    if ship.x>120 then
+        ship.x=120
+    end
+    if ship.y<0 then
+        ship.y=0
+    end
+    if ship.y>120 then
+        ship.y=120
     end
 end
 
