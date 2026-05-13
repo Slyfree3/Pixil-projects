@@ -8,6 +8,7 @@ __lua__
 #include update_game.lua
 #include draw_game.lua
 #include enemy.lua
+#include collision.lua
 -- main startup page
 
 
