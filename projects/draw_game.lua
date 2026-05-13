@@ -14,10 +14,15 @@ function draw_game()
   cls()          -- clear screen with dark blue
   draw_stars()
   draw_ship()   -- draw sprite #1 at coordinates x, y
-		draw_bullet() -- draw sprite for bullet
-		draw_exhaust()
-		draw_score()
-		draw_heart()
+  draw_bullet() -- draw sprite for bullet
+  draw_exhaust()
+  draw_score()
+  draw_heart()
+  draw_enemy()
+end
+
+function draw_sprite(myspr)
+    spr(myspr.spr, myspr.x, myspr.y)
 end
 
 function draw_start()
@@ -28,7 +33,7 @@ end
 
 
 function draw_ship()
-  spr(shipspr, ship.x, ship.y)
+  draw_sprite(ship)
   
   if muzzle>0 then
   	circfill(ship.x+3,ship.y-1,muzzle,7)
@@ -36,15 +41,14 @@ function draw_ship()
 end
 
 function draw_exhaust()
-		spr(exaustspr, ship.x, ship.y+8)
+	spr(exaust.spr, ship.x, ship.y+8)
 end
 
 function draw_bullet()
-		for i=1,#bullet do
-			local newbul=bullet[i]
-			newbul.spr=16
-			spr(bullet.spr,newbul.x,newbul.y)
-		end
+	for i=1,#bullet do
+		local newbul=bullet[i]
+		draw_sprite(newbul)
+	end
 end
 
 function draw_over()
