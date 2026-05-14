@@ -7,11 +7,11 @@ function make_ship()
     ship.sy = 2 -- ship speed y axis
     ship.x = 64 -- ship position x
     ship.y = 64 -- ship position y
-    ship.lives = 3 
+    ship.lives = 1 -- ship lives 
     ship.spr = 2 -- ship sprite
-    muzzle = 0
-	exaust={}
-	exaust.spr=5
+    muzzle = 0 -- muzzle flash timer
+	exaust={} -- exaust animation
+	exaust.spr=5 -- exaust starting sprite
 	exaust.x=ship.x
 	exaust.y=ship.y+8
 end
@@ -40,9 +40,6 @@ function move_ship()
     end
     if btn(3) then
      ship.y += ship.sy
-    end
-    if btn(4) then --todo:remove this
-    	mode="over"
     end
 end
 

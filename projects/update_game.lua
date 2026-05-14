@@ -20,6 +20,7 @@ function update_game()
     animate_muzzlefl()
 	animate_enemy()
     move_enemy()
+	col_ship_enemy()
 	collision_side_ship()
     animate_stars★()
 end
