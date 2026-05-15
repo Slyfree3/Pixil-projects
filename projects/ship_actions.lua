@@ -7,13 +7,14 @@ function make_ship()
     ship.sy = 2 -- ship speed y axis
     ship.x = 64 -- ship position x
     ship.y = 64 -- ship position y
-    ship.lives = 1 -- ship lives 
+    ship.lives = 3 -- ship lives 
     ship.spr = 2 -- ship sprite
     muzzle = 0 -- muzzle flash timer
 	exaust={} -- exaust animation
 	exaust.spr=5 -- exaust starting sprite
 	exaust.x=ship.x
 	exaust.y=ship.y+8
+	invunerable = 0 -- invulnerability timer
 end
 
 function make_bullet()
@@ -50,6 +51,21 @@ function move_bullet()
 
 		if newbul.y<-8 then -- delete bullet
 			del(bullet,newbul)
+		end
+	end
+end
+
+function collision_bullet_enemy()
+	for newbul in all(bullet) do
+		for myenemy in all(enemy) do
+			if collision(newbul, myenemy) then
+				-- Handle collision logic here
+				score.current+=1
+				sfx(1)
+				del(enemy,myenemy)
+				del(bullet,newbul)
+				make_enemy() -- spawn new enemy when one is destroyed	
+			end
 		end
 	end
 end

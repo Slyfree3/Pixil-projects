@@ -22,6 +22,7 @@ function update_game()
     move_enemy()
 	col_ship_enemy()
 	collision_side_ship()
+	collision_bullet_enemy()
     animate_stars★()
 end
 
