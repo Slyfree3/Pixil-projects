@@ -14,16 +14,21 @@ function collision_side_ship()
 end
 
 function col_ship_enemy()
-    for myenemy in all(enemy) do
-        if collision(ship, myenemy) then
-            -- Handle collision logic here
-			ship.lives-=1
-            sfx(1)
-			del(enemy,myenemy)
-			if ship.lives==0 then
-				mode="over"
-			end	
+    if invunerable <= 0 then
+        for myenemy in all(enemy) do
+            if collision(ship, myenemy) then
+                -- Handle collision logic here
+	    		ship.lives-=1
+                sfx(1)
+                invunerable=60 -- set invulnerability frames (e.g., 60 frames = 2 second at 60 FPS)
+	    		if ship.lives==0 then
+	    			mode="over"
+	    		end	
+            end
         end
+    else
+        -- Optionally, you can add visual feedback for invulnerability here (e.g., flashing the ship)
+        invunerable -= 1
     end
 end
 

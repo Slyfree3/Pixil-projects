@@ -1,5 +1,5 @@
 -- main startup page
-
+t=0
 -- initialize variables
 function _init()
  mode="start"
@@ -8,6 +8,7 @@ end
 
 -- handles actions
 function _update()
+	t+=1
 	state_update()
 	animate_stars★()
 end

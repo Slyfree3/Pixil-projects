@@ -24,6 +24,7 @@ function make_bullet()
 	bullet.sp = 7
 	bullet.spr = 16 -- starting sprite for bullet animation
 	bullet.sprm =19 -- max sprite for bullet animation
+	btimer=0 -- timer for bullet animation
 end
 
 function move_ship()
@@ -71,19 +72,25 @@ function collision_bullet_enemy()
 end
 
 function create_bullet()
-	local newbul={}
-	newbul.x=ship.x
-	newbul.y=ship.y - 5
-	newbul.spr=16
-	add(bullet,newbul)
+	if btimer <= 0 then
+		local newbul={}
+		newbul.x=ship.x
+		newbul.y=ship.y - 5
+		newbul.spr=16
+		add(bullet,newbul)
+		btimer= 5 -- set a cooldown for shooting (e.g., 10 frames)
+		muzzle = 5 
+	 	sfx(0)
+	end
+	
+
 end
 
 function shoot_bullet()
-	if btnp(5) then
+	if btn(5) then
 		create_bullet()
-	 muzzle = 5 
-	 sfx(0)
 	end
+	btimer-=1
 end
 
 function animate_bullet()

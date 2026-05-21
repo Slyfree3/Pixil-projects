@@ -12,6 +12,7 @@ function state_update()
 end
 
 function update_game()
+	
     move_ship()
     move_bullet()
     shoot_bullet()

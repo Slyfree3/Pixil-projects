@@ -16,6 +16,7 @@ function move_enemy()
         newenemy.y+=newenemy.sp
         if newenemy.y>128 then
             del(enemy,newenemy)
+            make_enemy() -- spawn new enemy when one goes off screen
         end
     end
 end
